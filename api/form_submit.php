@@ -12,8 +12,10 @@ $title = $data->title;
 $description = $data->description;
 $user_id = $_SESSION['user']['id'];
 
-$sql = "INSERT INTO form_data (user_id, title, description) VALUES ('$user_id', '$title', '$description')";
-$conn->query($sql);
+$stmt = $conn->prepare("INSERT INTO form_data (user_id, title, description) VALUES (?, ?, ?)");
+$stmt->bind_param("iss", $user_id, $title, $description);
+$stmt->execute();
+$stmt->close();
 
 echo json_encode(["success" => true, "message" => "Form submitted"]);
 ?>
