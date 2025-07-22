@@ -8,7 +8,9 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'senior_manager')
 $data = json_decode(file_get_contents("php://input"));
 $app_id = $data->application_id;
 $status = $data->status;
-$sql = "UPDATE applications SET status='$status' WHERE id=$app_id";
-$conn->query($sql);
+$stmt = $conn->prepare("UPDATE applications SET status=? WHERE id=?");
+$stmt->bind_param("si", $status, $app_id);
+$stmt->execute();
+$stmt->close();
 echo json_encode(["success" => true, "message" => "Status updated"]);
 ?>
