@@ -33,7 +33,7 @@ async function loadVacancies() {
     const vacancyDiv = document.createElement('div');
     vacancyDiv.classList.add('application-item'); // Reusing the style
     vacancyDiv.innerHTML = `
-      <span>${v.title} — ${v.description}</span>
+      <span>${escapeHTML(v.title)} — ${escapeHTML(v.description)}</span>
       <button onclick="apply(${v.id})">Apply</button>
     `;
     vacancyListDiv.appendChild(vacancyDiv);
@@ -57,9 +57,15 @@ async function loadApplications() {
   apps.forEach(a => {
     const appDiv = document.createElement('div');
     appDiv.classList.add('application-item'); // Reusing the style
-    appDiv.innerHTML = `<span>${a.title} — Status: ${a.status}</span>`;
+    appDiv.innerHTML = `<span>${escapeHTML(a.title)} — Status: ${escapeHTML(a.status)}</span>`;
     applicationStatusDiv.appendChild(appDiv);
   });
+}
+
+function escapeHTML(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
 }
 
 async function logout() {
