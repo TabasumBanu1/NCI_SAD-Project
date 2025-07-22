@@ -6,7 +6,9 @@ $email = $data->email;
 $password = $data->password;
 $role = $data->role;
 
-$sql = "INSERT INTO users (name, email, password, role) VALUES ('$name', '$email', '$password', '$role')";
-$conn->query($sql);
+$stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $name, $email, $password, $role);
+$stmt->execute();
+$stmt->close();
 echo json_encode(["success" => true, "message" => "Account created"]);
 ?>
