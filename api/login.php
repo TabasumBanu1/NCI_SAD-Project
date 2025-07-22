@@ -6,9 +6,12 @@ $data = json_decode(file_get_contents("php://input"));
 $email = $data->email;
 $password = $data->password;
 
-$sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM users WHERE email=? AND password=?");
+$stmt->bind_param("ss", $email, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 $user = $result->fetch_assoc();
+$stmt->close();
 
 if ($user) {
     $_SESSION['user'] = $user;
