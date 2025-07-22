@@ -1,16 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head><title>Manager Dashboard</title></head>
-<body>
-<h2>Senior Manager Dashboard</h2>
+<link rel="stylesheet" href="style.css">
+<div class="dashboard-container">
+  <div class="sidebar">
+    <h3>Manager Menu</h3>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Create Vacancy</a></li>
+      <li><a href="#">Applications</a></li>
+      <li><a href="#">Settings</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+  <div class="main-content">
+    <h2>Senior Manager Dashboard</h2>
 
-<h3>Create Vacancy</h3>
-<input id="title" placeholder="Vacancy Title" />
-<textarea id="description" placeholder="Vacancy Description"></textarea>
-<button onclick="createVacancy()">Create</button>
+    <h3>Create Vacancy</h3>
+    <div class="form-section">
+      <input id="title" placeholder="Vacancy Title" />
+      <textarea id="description" placeholder="Vacancy Description"></textarea>
+      <button onclick="createVacancy()">Create</button>
+    </div>
 
-<h3>Applications Received</h3>
-<div id="applicationList"></div>
+    <h3>Applications Received</h3>
+    <div id="applicationList"></div>
+  </div>
+</div>
 
 <script>
 async function createVacancy() {
@@ -27,15 +43,20 @@ async function createVacancy() {
 async function loadApplications() {
   const res = await fetch("api/get_applications_by_manager.php");
   const apps = await res.json();
-  let html = "<ul>";
+  const applicationListDiv = document.getElementById("applicationList");
+  applicationListDiv.innerHTML = '';
   apps.forEach(a => {
-    html += `<li>${a.employee_name} applied for ${a.title} — Status: ${a.status}
-     <button onclick="updateStatus(${a.id}, 'approved')">Approve</button>
-     <button onclick="updateStatus(${a.id}, 'rejected')">Reject</button>
-    </li>`;
+    const appDiv = document.createElement('div');
+    appDiv.classList.add('application-item');
+    appDiv.innerHTML = `
+      <span>${a.employee_name} applied for ${a.title} — Status: ${a.status}</span>
+      <div>
+        <button onclick="updateStatus(${a.id}, 'approved')">Approve</button>
+        <button onclick="updateStatus(${a.id}, 'rejected')">Reject</button>
+      </div>
+    `;
+    applicationListDiv.appendChild(appDiv);
   });
-  html += "</ul>";
-  document.getElementById("applicationList").innerHTML = html;
 }
 
 async function updateStatus(appId, status) {
@@ -44,6 +65,11 @@ async function updateStatus(appId, status) {
     body: JSON.stringify({ application_id: appId, status })
   });
   loadApplications();
+}
+
+async function logout() {
+  await fetch("api/logout.php");
+  window.location.href = "index.html";
 }
 
 loadApplications();

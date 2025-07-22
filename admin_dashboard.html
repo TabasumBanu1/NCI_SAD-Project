@@ -1,22 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head><title>Admin Dashboard</title></head>
-<body>
-<h2>Admin Dashboard</h2>
+
 
 <h3>All Users</h3>
-<div id="userList"></div>
+<link rel="stylesheet" href="style.css">
+<div class="dashboard-container">
+  <div class="sidebar">
+    <h3>Admin Menu</h3>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Users</a></li>
+      <li><a href="#">Vacancies</a></li>
+      <li><a href="#">Applications</a></li>
+      <li><a href="#">Settings</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+  <div class="main-content">
+    <h2>Admin Dashboard</h2>
+    <h3>All Users</h3>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <script>
 async function loadUsers() {
   const res = await fetch("api/get_all_users_admin.php");
   const users = await res.json();
-  let html = "<ul>";
+  const tableBody = document.querySelector("#userTable tbody");
+  tableBody.innerHTML = '';
   users.forEach(u => {
-    html += `<li>${u.name} (${u.email}) - Role: ${u.role}</li>`;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.role}</td>
+    `;
+    tableBody.appendChild(row);
   });
-  html += "</ul>";
-  document.getElementById("userList").innerHTML = html;
+}
+async function logout() {
+  await fetch("api/logout.php");
+  window.location.href = "index.html";
 }
 loadUsers();
 </script>

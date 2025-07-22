@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head><title>Employee Dashboard</title></head>
-<body>
-<h2>Employee Dashboard</h2>
+<link rel="stylesheet" href="style.css">
+<div class="dashboard-container">
+  <div class="sidebar">
+    <h3>Employee Menu</h3>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Vacancies</a></li>
+      <li><a href="#">My Applications</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+  <div class="main-content">
+    <h2>Employee Dashboard</h2>
 
-<h3>Available Vacancies</h3>
-<div id="vacancyList"></div>
+    <h3>Available Vacancies</h3>
+    <div id="vacancyList"></div>
 
-<h3>Your Applications</h3>
-<div id="applicationStatus"></div>
+    <h3>Your Applications</h3>
+    <div id="applicationStatus"></div>
+  </div>
+</div>
 
 <script>
 async function loadVacancies() {
   const res = await fetch("api/get_vacancies.php");
   const vacancies = await res.json();
-  let html = "<ul>";
+  const vacancyListDiv = document.getElementById("vacancyList");
+  vacancyListDiv.innerHTML = '';
   vacancies.forEach(v => {
-    html += `<li>${v.title} — ${v.description}
-      <button onclick="apply(${v.id})">Apply</button></li>`;
+    const vacancyDiv = document.createElement('div');
+    vacancyDiv.classList.add('application-item'); // Reusing the style
+    vacancyDiv.innerHTML = `
+      <span>${v.title} — ${v.description}</span>
+      <button onclick="apply(${v.id})">Apply</button>
+    `;
+    vacancyListDiv.appendChild(vacancyDiv);
   });
-  html += "</ul>";
-  document.getElementById("vacancyList").innerHTML = html;
 }
 
 async function apply(id) {
@@ -35,12 +52,19 @@ async function apply(id) {
 async function loadApplications() {
   const res = await fetch("api/get_applications_by_employee.php");
   const apps = await res.json();
-  let html = "<ul>";
+  const applicationStatusDiv = document.getElementById("applicationStatus");
+  applicationStatusDiv.innerHTML = '';
   apps.forEach(a => {
-    html += `<li>${a.title} — Status: ${a.status}</li>`;
+    const appDiv = document.createElement('div');
+    appDiv.classList.add('application-item'); // Reusing the style
+    appDiv.innerHTML = `<span>${a.title} — Status: ${a.status}</span>`;
+    applicationStatusDiv.appendChild(appDiv);
   });
-  html += "</ul>";
-  document.getElementById("applicationStatus").innerHTML = html;
+}
+
+async function logout() {
+  await fetch("api/logout.php");
+  window.location.href = "index.html";
 }
 
 loadVacancies();
