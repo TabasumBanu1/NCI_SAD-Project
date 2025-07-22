@@ -9,7 +9,9 @@ $data = json_decode(file_get_contents("php://input"));
 $title = $data->title;
 $description = $data->description;
 $created_by = $_SESSION['user']['id'];
-$sql = "INSERT INTO vacancies (title, description, created_by) VALUES ('$title', '$description', $created_by)";
-$conn->query($sql);
+$stmt = $conn->prepare("INSERT INTO vacancies (title, description, created_by) VALUES (?, ?, ?)");
+$stmt->bind_param("ssi", $title, $description, $created_by);
+$stmt->execute();
+$stmt->close();
 echo json_encode(["success" => true, "message" => "Vacancy created"]);
 ?>
