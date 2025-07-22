@@ -4,7 +4,9 @@ $data = json_decode(file_get_contents("php://input"));
 $id = $data->id;
 $name = $data->name;
 $email = $data->email;
-$sql = "UPDATE users SET name='$name', email='$email' WHERE id=$id";
-$conn->query($sql);
+$stmt = $conn->prepare("UPDATE users SET name=?, email=? WHERE id=?");
+$stmt->bind_param("ssi", $name, $email, $id);
+$stmt->execute();
+$stmt->close();
 echo json_encode(["message" => "User updated"]);
 ?>
