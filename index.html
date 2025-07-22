@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - Role Based System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+
+  <script>
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("api/login.php", {
+        method: "POST",
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const role = data.user.role;
+        if (role === "admin") {
+          window.location.href = "admin_dashboard.html";
+        } else if (role === "senior_manager") {
+          window.location.href = "manager_dashboard.html";
+        } else {
+          window.location.href = "employee_dashboard.html";
+        }
+      } else {
+        alert("Invalid email or password");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Dashboard</title></head>
+<body>
+<h2>Admin Dashboard</h2>
+
+<h3>All Users</h3>
+<div id="userList"></div>
+
+<script>
+async function loadUsers() {
+  const res = await fetch("api/get_all_users_admin.php");
+  const users = await res.json();
+  let html = "<ul>";
+  users.forEach(u => {
+    html += `<li>${u.name} (${u.email}) - Role: ${u.role}</li>`;
+  });
+  html += "</ul>";
+  document.getElementById("userList").innerHTML = html;
+}
+loadUsers();
+</script>
+</body>
+</html>
