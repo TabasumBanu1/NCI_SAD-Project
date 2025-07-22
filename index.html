@@ -67,6 +67,16 @@
       e.preventDefault();
       let email = document.getElementById('login-email').value.trim();
       let password = document.getElementById('login-password').value;
+
+      if (!email || !password) {
+        document.getElementById('loginStatus').innerText = 'Please enter both email and password.';
+        return;
+      }
+      if (!/^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
+        document.getElementById('loginStatus').innerText = 'Please enter a valid email address.';
+        return;
+      }
+
       document.getElementById('loginStatus').innerText = 'Checking...';
       const res = await fetch('api/login.php', {
         method: 'POST',
@@ -91,6 +101,20 @@
       let email = document.getElementById('reg-email').value.trim();
       let password = document.getElementById('reg-password').value;
       let role = document.getElementById('reg-role').value;
+
+      if (!name || !email || !password || !role) {
+        document.getElementById('registerStatus').innerText = 'All fields are required.';
+        return;
+      }
+      if (!/^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
+        document.getElementById('registerStatus').innerText = 'Please enter a valid email address.';
+        return;
+      }
+      if (password.length < 4) {
+        document.getElementById('registerStatus').innerText = 'Password must be at least 4 characters long.';
+        return;
+      }
+
       document.getElementById('registerStatus').innerText = 'Processing...';
       const res = await fetch('api/register.php', {
         method: 'POST',
